@@ -1,6 +1,5 @@
 #include <cstdint>
 #include <iostream>
-#include <iterator>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -189,7 +188,7 @@ void pretty_print_sys_info(utsname* sysinfo,
   std::string display_manager = get_display_manager(); 
   std::ostringstream pretty_info;
   pretty_info << R"(
-                  @@@@@@                 
+                  @@@@@@                                 
                 @@@@@@@@@@               
                @@@@@@@@@@@                    __h(ea)b(eoun's)fetch___ 
          @@@@@@@@@@@@@@@@@@@@@@               node_name: )" << sysinfo->nodename << R"( 
@@ -200,11 +199,11 @@ void pretty_print_sys_info(utsname* sysinfo,
           @@@@@@          @@@@@@@             operating system: )" << pc_info->Os << R"(
        @@@@@@@@@@        @@@@@@               display protocol: )" << display_manager << R"(
      @@@@@@@@@@@@@@@@@@@@@@@@@@@@             cpu: )" << cpu_info->CpuName << cpu_info->CpuCore << " cores" << R"( 
-    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@           gpu: )" << get_gpus();
-// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@        
-// @@@@@@@@@@@@@@@    @@@@@@@@@@@@@@        
-//  @@@@@@@@@@@@        @@@@@@@@@@@         
-//   @@@@@@@@@             @@@@@@ )";          
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@           
+   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@        
+   @@@@@@@@@@@@@@@    @@@@@@@@@@@@@@        
+    @@@@@@@@@@@@        @@@@@@@@@@@         
+     @@@@@@@@@             @@@@@@ )";          
   std::cout << pretty_info.str() << std::endl;
 }
 
@@ -217,8 +216,6 @@ int main() {
   PcInfo pc_info = get_os_info();
   UpTime sysuptime = get_sys_uptime();
   // std::cout << fucc2.CpuName << std::endl;
-  pretty_print_sys_info(&sysinfo, &fucc, &sysuptime, &pc_info, &cpu_info
-                        );
-
+  pretty_print_sys_info(&sysinfo, &fucc, &sysuptime, &pc_info, &cpu_info);
   return 0;
 }
