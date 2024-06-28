@@ -11,7 +11,7 @@ COMPILER_FLAGS = -w
 #LINKER_FLAGS specifies the libraries we're linking against
 LINKER_FLAGS = 
 #OBJ_NAME specifies the name of our exectuable
-OBJ_NAME = main
+OBJ_NAME = main.out
 
 #This is the target that compiles our executable
 all: $(OBJS) 
