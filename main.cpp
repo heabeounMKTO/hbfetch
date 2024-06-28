@@ -79,14 +79,17 @@ CpuInfo get_cpu_info() {
   std::uint64_t value;
   std::string delimiter = ":";
   while(std::getline(ifs, line)) {
-    size_t pos = line.find(delimiter);
+        // Find the position of the delimiter
+        size_t pos = line.find(delimiter);
         if (pos != std::string::npos) {
             // Extract the key and value
             std::string field = line.substr(0, pos);
             std::string value = line.substr(pos + delimiter.length());
-            if (value.front() == '"' && value.back() == '"') {
-                value = value.substr(1, value.size() - 2);
-            }
+
+            field.erase(field.find_last_not_of(" \t\n\r\f\v") + 1);
+            // Trim whitespace from the value
+            value.erase(0, value.find_first_not_of(" \t\n\r\f\v"));
+
             if (field == "model name") {
                 cpu_info.CpuName = value;
                 break;
@@ -95,6 +98,22 @@ CpuInfo get_cpu_info() {
   }  
   return cpu_info;
 }
+
+std::stringstream get_display_manager() {
+    FILE *in;
+    char buff[4097];
+    char *command = "echo $XDG_SESSION_TYPE";
+    if ( !(in = popen(command, "r"))){
+      throw std::runtime_error("error: unable to access sessions");  
+  }
+    std::stringstream ss; 
+    while (fgets(buff, sizeof(buff), in)!= NULL){
+       ss << buff;
+    }
+  return ss;
+}
+
+
 /// returns uptime in seconds
 UpTime get_sys_uptime() {
   constexpr const char* uptime = "/proc/uptime";
@@ -114,7 +133,6 @@ UpTime get_sys_uptime() {
 
   system_uptime.Hours = (int)(hours);
   system_uptime.Minutes = (int)(minutes);
-  // printf("minutes: %f", minutes);
   return system_uptime;
 }
 
