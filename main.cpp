@@ -180,6 +180,20 @@ MemoryInfo get_memory_info()
   return m_info;
 }
 
+std::string get_shell() {
+ FILE *in;
+  char buff[128];
+  char *command = "echo $SHELL";
+  if ( !(in = popen(command, "r"))){
+    throw std::runtime_error("error: unable to access sessions");  
+  }
+  std::stringstream ss; 
+  fgets(buff, sizeof(buff), in);
+  std::string _buff = std::string(buff);
+  _buff.erase(_buff.find_last_not_of(" \t\n\r\f\v") + 1);
+  return _buff;
+}
+
 void pretty_print_sys_info(utsname* sysinfo, 
                            MemoryInfo* mem_info,
                            UpTime* system_uptime,
@@ -197,10 +211,10 @@ void pretty_print_sys_info(utsname* sysinfo,
        @@@@@@@@@@        @@@@@@@@@@@          memory: )" << mem_info->AllMem - mem_info->AvailableMem <<"/"<< mem_info->AllMem << " GB *used/available*" << R"(  
         @@@@@@@@          @@@@@@@@@           uptime: )" << system_uptime->Hours << " hours " << system_uptime->Minutes << " minutes" << R"(
           @@@@@@          @@@@@@@             operating system: )" << pc_info->Os << R"(
-       @@@@@@@@@@        @@@@@@               display protocol: )" << display_manager << R"(
-     @@@@@@@@@@@@@@@@@@@@@@@@@@@@             cpu: )" << cpu_info->CpuName << cpu_info->CpuCore << " cores" << R"( 
-    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@           
-   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@        
+       @@@@@@@@@@        @@@@@@               windowing system: )" << display_manager << R"(
+     @@@@@@@@@@@@@@@@@@@@@@@@@@@@             cpu: )" << cpu_info->CpuName <<  R"( 
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@           shell: )" << get_shell() << R"(
+   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          
    @@@@@@@@@@@@@@@    @@@@@@@@@@@@@@        
     @@@@@@@@@@@@        @@@@@@@@@@@         
      @@@@@@@@@             @@@@@@ )";          
