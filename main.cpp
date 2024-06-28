@@ -116,7 +116,7 @@ std::string get_display_manager() {
   return _buff;
 }
 
-std::string get_gpus() {
+std::string get_displays() {
  FILE *in;
   char buff[128];
   char *command = "lspci | grep 'VGA'";
@@ -214,7 +214,7 @@ void pretty_print_sys_info(utsname* sysinfo,
        @@@@@@@@@@        @@@@@@               windowing system: )" << display_manager << R"(
      @@@@@@@@@@@@@@@@@@@@@@@@@@@@             cpu: )" << cpu_info->CpuName <<  R"( 
     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@           shell: )" << get_shell() << R"(
-   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          
+   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          display: )" << get_displays() <<R"( 
    @@@@@@@@@@@@@@@    @@@@@@@@@@@@@@        
     @@@@@@@@@@@@        @@@@@@@@@@@         
      @@@@@@@@@             @@@@@@ )";          
