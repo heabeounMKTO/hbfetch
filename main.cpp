@@ -16,7 +16,7 @@ typedef struct MemoryInfo {
 
 typedef struct CpuInfo {
   std::string CpuName;
-  int CpuCore; 
+  std::string CpuCore; 
   std::string CpuVendor;
   
 } CpuInfo;
@@ -91,7 +91,11 @@ CpuInfo get_cpu_info() {
             value.erase(0, value.find_first_not_of(" \t\n\r\f\v"));
 
             if (field == "model name") {
-                cpu_info.CpuName = value;
+                cpu_info.CpuName = std::string(value);
+                break;
+            }
+            if (field == "cpu cores") { 
+                cpu_info.CpuCore = std::string(value);
                 break;
             }
         }
@@ -108,7 +112,23 @@ std::string get_display_manager() {
   }
   std::stringstream ss; 
   fgets(buff, sizeof(buff), in);
-  return std::string(buff);
+  std::string _buff = std::string(buff);
+  _buff.erase(_buff.find_last_not_of(" \t\n\r\f\v") + 1);
+  return _buff;
+}
+
+std::string get_gpus() {
+ FILE *in;
+  char buff[128];
+  char *command = "lspci | grep 'VGA'";
+  if ( !(in = popen(command, "r"))){
+    throw std::runtime_error("error: unable to access sessions");  
+  }
+  std::stringstream ss; 
+  fgets(buff, sizeof(buff), in);
+  std::string _buff = std::string(buff);
+  _buff.erase(_buff.find_last_not_of(" \t\n\r\f\v") + 1);
+  return _buff;
 }
 
 
@@ -164,22 +184,23 @@ MemoryInfo get_memory_info()
 void pretty_print_sys_info(utsname* sysinfo, 
                            MemoryInfo* mem_info,
                            UpTime* system_uptime,
-                           PcInfo* pc_info) {
+                           PcInfo* pc_info,
+                           CpuInfo* cpu_info) {
   std::string display_manager = get_display_manager(); 
   std::ostringstream pretty_info;
   pretty_info << R"(
                   @@@@@@                 
                 @@@@@@@@@@               
-               @@@@@@@@@@@                    __(hea)b(eoun's)fetch___ 
+               @@@@@@@@@@@                    __h(ea)b(eoun's)fetch___ 
          @@@@@@@@@@@@@@@@@@@@@@               node_name: )" << sysinfo->nodename << R"( 
        @@@@@@@@@@@@@@@@@@@@@@@@@@@@           architecture: )" << sysinfo->machine << R"(
       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          kernel: )" << sysinfo->release << R"(
        @@@@@@@@@@        @@@@@@@@@@@          memory: )" << mem_info->AllMem - mem_info->AvailableMem <<"/"<< mem_info->AllMem << " GB *used/available*" << R"(  
         @@@@@@@@          @@@@@@@@@           uptime: )" << system_uptime->Hours << " hours " << system_uptime->Minutes << " minutes" << R"(
-          @@@@@@          @@@@@@@             operating system: )" << pc_info->Os << R"(;
-       @@@@@@@@@@        @@@@@@               display protocol: )" << display_manager;
-//   @@@@@@@@@@@@@@@@@@@@@@@@@@@@           
-//  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@         
+          @@@@@@          @@@@@@@             operating system: )" << pc_info->Os << R"(
+       @@@@@@@@@@        @@@@@@               display protocol: )" << display_manager << R"(
+     @@@@@@@@@@@@@@@@@@@@@@@@@@@@             cpu: )" << cpu_info->CpuName << cpu_info->CpuCore << " cores" << R"( 
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@           gpu: )" << get_gpus();
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@        
 // @@@@@@@@@@@@@@@    @@@@@@@@@@@@@@        
 //  @@@@@@@@@@@@        @@@@@@@@@@@         
@@ -189,14 +210,15 @@ void pretty_print_sys_info(utsname* sysinfo,
 
 int main() {
   MemoryInfo fucc = get_memory_info();
-  CpuInfo fucc2 = get_cpu_info();
+  CpuInfo cpu_info = get_cpu_info();
   // printf("ayylmao %s", fucc2.CpuName);
   struct utsname sysinfo;
   uname(&sysinfo);
   PcInfo pc_info = get_os_info();
   UpTime sysuptime = get_sys_uptime();
-
-  pretty_print_sys_info(&sysinfo, &fucc, &sysuptime, &pc_info);
+  // std::cout << fucc2.CpuName << std::endl;
+  pretty_print_sys_info(&sysinfo, &fucc, &sysuptime, &pc_info, &cpu_info
+                        );
 
   return 0;
 }
