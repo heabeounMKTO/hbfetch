@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <iostream>
+#include <iterator>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -67,7 +68,6 @@ PcInfo get_os_info() {
   return pc_info;
 }
 
-
 CpuInfo get_cpu_info() {
   constexpr const char* cpuinfo_file = "/proc/cpuinfo";
   CpuInfo cpu_info; 
@@ -99,18 +99,16 @@ CpuInfo get_cpu_info() {
   return cpu_info;
 }
 
-std::stringstream get_display_manager() {
-    FILE *in;
-    char buff[4097];
-    char *command = "echo $XDG_SESSION_TYPE";
-    if ( !(in = popen(command, "r"))){
-      throw std::runtime_error("error: unable to access sessions");  
+std::string get_display_manager() {
+  FILE *in;
+  char buff[128];
+  char *command = "echo $XDG_SESSION_TYPE";
+  if ( !(in = popen(command, "r"))){
+    throw std::runtime_error("error: unable to access sessions");  
   }
-    std::stringstream ss; 
-    while (fgets(buff, sizeof(buff), in)!= NULL){
-       ss << buff;
-    }
-  return ss;
+  std::stringstream ss; 
+  fgets(buff, sizeof(buff), in);
+  return std::string(buff);
 }
 
 
@@ -167,7 +165,7 @@ void pretty_print_sys_info(utsname* sysinfo,
                            MemoryInfo* mem_info,
                            UpTime* system_uptime,
                            PcInfo* pc_info) {
-  
+  std::string display_manager = get_display_manager(); 
   std::ostringstream pretty_info;
   pretty_info << R"(
                   @@@@@@                 
@@ -178,8 +176,8 @@ void pretty_print_sys_info(utsname* sysinfo,
       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          kernel: )" << sysinfo->release << R"(
        @@@@@@@@@@        @@@@@@@@@@@          memory: )" << mem_info->AllMem - mem_info->AvailableMem <<"/"<< mem_info->AllMem << " GB *used/available*" << R"(  
         @@@@@@@@          @@@@@@@@@           uptime: )" << system_uptime->Hours << " hours " << system_uptime->Minutes << " minutes" << R"(
-          @@@@@@          @@@@@@@             operating system: )" << pc_info->Os;
-//     @@@@@@@@@@        @@@@@@             
+          @@@@@@          @@@@@@@             operating system: )" << pc_info->Os << R"(;
+       @@@@@@@@@@        @@@@@@               display protocol: )" << display_manager;
 //   @@@@@@@@@@@@@@@@@@@@@@@@@@@@           
 //  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@         
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@        
@@ -192,7 +190,7 @@ void pretty_print_sys_info(utsname* sysinfo,
 int main() {
   MemoryInfo fucc = get_memory_info();
   CpuInfo fucc2 = get_cpu_info();
-  printf("ayylmao %s", fucc2.CpuName);
+  // printf("ayylmao %s", fucc2.CpuName);
   struct utsname sysinfo;
   uname(&sysinfo);
   PcInfo pc_info = get_os_info();
