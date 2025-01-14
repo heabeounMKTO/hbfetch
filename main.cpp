@@ -202,29 +202,44 @@ void pretty_print_sys_info(utsname* sysinfo,
   std::string display_manager = get_display_manager(); 
   std::ostringstream pretty_info;
 
-  // Apply blue color using ANSI escape codes
+  // The flower in blue
   pretty_info << "\033[34m" << R"(
                   @@@@@@                                 
                 @@@@@@@@@@               
-               @@@@@@@@@@@                    __h(ea)b(eoun's)fetch___ 
-         @@@@@@@@@@@@@@@@@@@@@@               node_name: )" << sysinfo->nodename << R"( 
-       @@@@@@@@@@@@@@@@@@@@@@@@@@@@           architecture: )" << sysinfo->machine << R"(
-      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          kernel: )" << sysinfo->release << R"(
-       @@@@@@@@@@        @@@@@@@@@@@          memory: )" << mem_info->AllMem - mem_info->AvailableMem <<"/"<< mem_info->AllMem << " GB *used/available*" << R"(  
-        @@@@@@@@          @@@@@@@@@           uptime: )" << system_uptime->Hours << " hours " << system_uptime->Minutes << " minutes" << R"(
-          @@@@@@          @@@@@@@             operating system: )" << pc_info->Os << R"(
-       @@@@@@@@@@        @@@@@@               windowing system: )" << display_manager << R"(
-     @@@@@@@@@@@@@@@@@@@@@@@@@@@@             cpu: )" << cpu_info->CpuName <<  R"( 
-    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@           shell: )" << get_shell() << R"(
-   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          display: )" << get_displays() <<R"( 
-   @@@@@@@@@@@@@@@    @@@@@@@@@@@@@@        
-    @@@@@@@@@@@@        @@@@@@@@@@@         
-     @@@@@@@@@             @@@@@@ )";
+               @@@@@@@@@@@
+         @@@@@@@@@@@@@@@@@@@@@@       
+       @@@@@@@@@@@@@@@@@@@@@@@@@@@@    
+      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   
+       @@@@@@@@@@        @@@@@@@@@@@   
+        @@@@@@@@          @@@@@@@@@    
+          @@@@@@          @@@@@@@      
+       @@@@@@@@@@        @@@@@@        
+     @@@@@@@@@@@@@@@@@@@@@@@@@@@@      
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@    
+   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   
+   @@@@@@@@@@@@@@@    @@@@@@@@@@@@@@   
+    @@@@@@@@@@@@        @@@@@@@@@@@    
+     @@@@@@@@@             @@@@@@       
+  )" << "\033[0m"; // Reset to default color
 
-  pretty_info << "\033[0m";
+  // The rest of the system info in default color
+  pretty_info << R"(                    __h(ea)b(eoun's)fetch___ 
+         node_name: )" << sysinfo->nodename << R"( 
+       architecture: )" << sysinfo->machine << R"(
+            kernel: )" << sysinfo->release << R"(
+            memory: )" << mem_info->AllMem - mem_info->AvailableMem <<"/"<< mem_info->AllMem << " GB *used/available*" << R"(  
+             uptime: )" << system_uptime->Hours << " hours " << system_uptime->Minutes << " minutes" << R"(
+  operating system: )" << pc_info->Os << R"(
+ windowing system: )" << display_manager << R"(
+              cpu: )" << cpu_info->CpuName <<  R"( 
+            shell: )" << get_shell() << R"(
+           display: )" << get_displays() <<R"( 
+)";
 
   std::cout << pretty_info.str() << std::endl;
 }
+
+
 int main() {
   MemoryInfo fucc = get_memory_info();
   CpuInfo cpu_info = get_cpu_info();
