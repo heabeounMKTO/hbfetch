@@ -201,7 +201,9 @@ void pretty_print_sys_info(utsname* sysinfo,
                            CpuInfo* cpu_info) {
   std::string display_manager = get_display_manager(); 
   std::ostringstream pretty_info;
-  pretty_info << R"(
+
+  // Apply blue color using ANSI escape codes
+  pretty_info << "\033[34m" << R"(
                   @@@@@@                                 
                 @@@@@@@@@@               
                @@@@@@@@@@@                    __h(ea)b(eoun's)fetch___ 
@@ -217,10 +219,12 @@ void pretty_print_sys_info(utsname* sysinfo,
    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          display: )" << get_displays() <<R"( 
    @@@@@@@@@@@@@@@    @@@@@@@@@@@@@@        
     @@@@@@@@@@@@        @@@@@@@@@@@         
-     @@@@@@@@@             @@@@@@ )";          
+     @@@@@@@@@             @@@@@@ )";
+
+  pretty_info << "\033[0m";
+
   std::cout << pretty_info.str() << std::endl;
 }
-
 int main() {
   MemoryInfo fucc = get_memory_info();
   CpuInfo cpu_info = get_cpu_info();
