@@ -223,7 +223,7 @@ void pretty_print_sys_info(utsname* sysinfo,
   )" << "\033[0m"; // Reset to default color
 
   // The rest of the system info in default color
-  pretty_info << R"(                    __h(ea)b(eoun's)fetch___ 
+  pretty_info << R"(__h(ea)b(eoun's)fetch___ 
          node_name: )" << sysinfo->nodename << R"( 
        architecture: )" << sysinfo->machine << R"(
             kernel: )" << sysinfo->release << R"(
